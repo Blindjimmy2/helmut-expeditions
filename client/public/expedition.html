@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>Helmut Expeditions — snap a plate, join the dig</title>
+<link rel="icon" type="image/png" href="./favicon.png" />
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b1526; --surface: #132033; --text: #eef3f9;
+    --dim: #93a3b8; --border: #24344d; --accent: #5f8fb4;
+    --gold: #c9a227; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 64px; }
+  .hero img.banner { width: 100%; border-radius: var(--radius);
+    border: 1px solid var(--border); display: block; }
+  .tag { font-size: 20px; line-height: 1.4; margin: 18px 0 6px; }
+  .sub { color: var(--dim); font-size: 15px; margin: 0 0 14px; }
+  .meter { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 16px; font-size: 14px;
+    display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; }
+  .meter b { color: var(--gold); font-size: 18px; }
+  .meter small { color: var(--dim); }
+  h2 { font-size: 16px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--dim); margin: 32px 0 12px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; cursor: pointer; padding: 0;
+    color: var(--text); font: inherit; text-align: left; }
+  .card:hover { border-color: var(--accent); }
+  .card img { width: 100%; height: 150px; object-fit: cover; display: block;
+    background: #000; }
+  .card .t { padding: 10px 12px; font-size: 14px; }
+  .card .t small { display: block; color: var(--dim); margin-top: 2px; }
+  .drop { border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 28px 16px; text-align: center; color: var(--dim); font-size: 15px;
+    cursor: pointer; }
+  .drop:hover { border-color: var(--accent); color: var(--text); }
+  .drop input { display: none; }
+  #stage { margin-top: 24px; }
+  .panel { background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-top: 12px; }
+  .panel h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--accent); }
+  .panel img.plate { max-width: 100%; max-height: 320px; border-radius: 8px;
+    display: block; margin-bottom: 10px; }
+  .lines { font-size: 14px; line-height: 1.7; }
+  .lines .ln { opacity: 0; animation: fadein .3s forwards; }
+  @keyframes fadein { to { opacity: 1; } }
+  .leg-clear { color: var(--text); } .leg-partial { color: var(--dim); }
+  .leg-illegible { color: #5a6b82; font-style: italic; }
+  .verdict { font-size: 22px; font-weight: 700; letter-spacing: .02em; }
+  .verdict small { display: block; font-size: 13px; font-weight: 400;
+    color: var(--dim); margin-top: 4px; }
+  .v-match { color: #7fd08a; } .v-partial { color: var(--gold); }
+  .v-un { color: var(--accent); }
+  .sources { list-style: none; margin: 10px 0 0; padding: 0; font-size: 13px; }
+  .sources li { margin-bottom: 8px; }
+  .sources a { color: var(--accent); }
+  .sources p { margin: 2px 0 0; color: var(--dim); font-size: 12px; }
+  .meta { font-size: 12px; color: var(--dim); margin-top: 10px; }
+  .btnrow { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  button.act { background: var(--accent); border: 0; border-radius: 8px;
+    color: #0b1526; font-weight: 600; font-size: 14px; padding: 9px 16px;
+    cursor: pointer; }
+  button.ghost { background: transparent; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px; padding: 8px 14px;
+    cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .err { color: #e88; font-size: 14px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--dim); }
+  footer a { color: var(--accent); }
+  .scanbar { height: 4px; background: var(--border); border-radius: 2px;
+    overflow: hidden; margin: 8px 0 12px; }
+  .scanbar i { display: block; height: 100%; width: 0; background: var(--accent);
+    transition: width .2s; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <img class="banner" src="./logo.jpg" alt="Helmut Expeditions" />
+    <p class="tag">Snap a manuscript photo. Join the dig. The page gets
+    transcribed blind — from the photo alone — then checked against
+    what's published.</p>
+    <p class="sub">Three real expeditions below, replayed free. Or drop
+    your own plate and run it live.</p>
+    <div class="meter">
+      <span><b>~$0.005</b> a plate</span>
+      <span><b>~2,000</b> plates per $10</span>
+      <small>Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
+    </div>
+  </div>
+
+  <h2>Pick an expedition</h2>
+  <div class="cards" id="cards"><p class="sub">Loading samples…</p></div>
+
+  <h2>Or drop your own plate</h2>
+  <label class="drop" id="drop">Tap to choose a photo — JPG or PNG, one plate per run.
+    <input type="file" id="file" accept="image/jpeg,image/png" />
+  </label>
+
+  <div id="stage"></div>
+
+  <footer>
+    How it works: <b>1.</b> blind transcription from pixels alone.
+    <b>2.</b> cross-check against published references found on the web.
+    Uncertainties stay marked; gaps stay gaps. A "no match" verdict means
+    <i>no match in what was checked</i> — never "unpublished". Full workbench:
+    <a href="./">helmutreads.com</a>
+  </footer>
+</div>
+<script>
+"use strict";
+const EMBER_IN = 0.10, EMBER_OUT = 0.50; // $ per 1M tokens (Meta Model API)
+const dollars = (tin, tout) => (tin / 1e6) * EMBER_IN + (tout / 1e6) * EMBER_OUT;
+const money = (n) => "$" + n.toFixed(n < 0.01 && n > 0 ? 4 : 2);
+const stage = document.getElementById("stage");
+let SAMPLES = [];
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+async function api(action, args) {
+  const res = await fetch("./actions", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action, args }),
+  });
+  const body = await res.json();
+  if (!res.ok || body.error) throw new Error(body.error || `Action ${action} failed (${res.status}).`);
+  return body;
+}
+
+function verdictHTML(v, summary) {
+  if (v === "match_found")
+    return `<p class="verdict v-match">IDENTIFIED<small>${esc(summary)}</small></p>`;
+  if (v === "partial")
+    return `<p class="verdict v-partial">PARTIAL MATCH<small>${esc(summary)}</small></p>`;
+  return `<p class="verdict v-un">UNCHARTED<small>${esc(summary || "No match in everything checked — worth a human look.")}</small></p>`;
+}
+
+function sourcesHTML(sources) {
+  if (!sources || !sources.length) return "";
+  return `<ul class="sources">${sources.map((s, i) =>
+    `<li>[${i + 1}] ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.title)}</a>` : esc(s.title)}${s.snippet ? `<p>${esc(s.snippet)}</p>` : ""}</li>`
+  ).join("")}</ul>`;
+}
+
+async function playExpedition({ img, language, summary, lines, lineCount, verdict, verdictSummary, queries, sources, costNote, link }) {
+  stage.innerHTML = `<div class="panel"><h3>Phase 1 — blind transcription</h3>
+    <img class="plate" src="${esc(img)}" alt="plate" />
+    <div class="scanbar"><i id="scan"></i></div>
+    <div class="lines" id="lines"></div>
+    <p class="meta">${esc(language || "")} · ${esc(summary || "")}</p></div>
+    <div class="panel" id="p2" style="display:none"><h3>Phase 2 — cross-reference</h3>
+    <p class="meta" id="p2msg">Checking the world's libraries…</p></div>
+    <div id="presult"></div>`;
+  const bar = document.getElementById("scan"), box = document.getElementById("lines");
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    const div = document.createElement("div");
+    div.className = "ln";
+    div.innerHTML = `<span class="leg-${esc(l.legibility || "partial")}">${esc(l.text) || "…"}</span>`;
+    box.appendChild(div);
+    bar.style.width = Math.round(((i + 1) / lines.length) * 100) + "%";
+    await sleep(110);
+  }
+  if (lineCount > lines.length) {
+    const div = document.createElement("div");
+    div.className = "ln";
+    div.innerHTML = `<span class="leg-illegible">…and ${lineCount - lines.length} more lines</span>`;
+    box.appendChild(div);
+  }
+  await sleep(400);
+  const p2 = document.getElementById("p2");
+  p2.style.display = "";
+  await sleep(900);
+  document.getElementById("p2msg").textContent =
+    queries && queries.length ? "Searched for: " + queries.join(" · ") : "Search complete.";
+  await sleep(400);
+  document.getElementById("presult").innerHTML =
+    `<div class="panel">${verdictHTML(verdict, verdictSummary)}${sourcesHTML(sources)}
+    <p class="meta">${esc(costNote)}</p>
+    <div class="btnrow"><button class="ghost" id="copylink">Copy expedition link</button></div></div>`;
+  document.getElementById("copylink").onclick = async () => {
+    try { await navigator.clipboard.writeText(link); } catch {}
+  };
+  stage.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function runSample(id) {
+  const s = SAMPLES.find((x) => x.id === id);
+  if (!s) return;
+  location.hash = "sample-" + id;
+  await playExpedition({
+    img: s.image, language: s.language, summary: s.summary,
+    lines: s.lines, lineCount: s.lineCount, verdict: s.verdict,
+    verdictSummary: s.verdictSummary, queries: s.queries, sources: s.sources,
+    costNote: "Replayed expedition — this viewing cost $0. A live run averages ~$0.005.",
+    link: location.origin + location.pathname + "#sample-" + id,
+  });
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const s = String(r.result || "");
+      const i = s.indexOf("base64,");
+      if (i < 0) return reject(new Error("Could not read that file."));
+      resolve({ dataBase64: s.slice(i + 7), mimeType: file.type || "image/jpeg" });
+    };
+    r.onerror = () => reject(new Error("Could not read that file."));
+    r.readAsDataURL(file);
+  });
+}
+
+async function runLive(file) {
+  stage.innerHTML = `<div class="panel"><h3>Live expedition</h3><p class="meta">Reading your plate…</p></div>`;
+  try {
+    const { dataBase64, mimeType } = await fileToBase64(file);
+    const t = await api("transcribePlate", { image: { dataBase64, mimeType }, note: "", provenance: "" });
+    const run = t.run;
+    stage.innerHTML = `<div class="panel"><h3>Phase 1 — blind transcription</h3>
+      <div class="lines">${run.transcription.lines.slice(0, 14).map((l) =>
+        `<div><span class="leg-${esc(l.legibility)}">${esc(l.text) || "…"}</span></div>`).join("")}</div>
+      <p class="meta">${esc(run.transcription.language)} · ${esc(run.transcription.summary)}</p></div>
+      <div class="panel"><h3>Phase 2 — cross-reference</h3><p class="meta">Checking the world's libraries…</p></div>`;
+    const r2 = await api("researchRun", { runId: run.id });
+    const rr = r2.run, rs = rr.research;
+    let costNote = "Live run — cost tracked in your usage dashboard.";
+    try {
+      const u = await api("usageSummary", {});
+      const row = (u.byRun || []).find((x) => x.id === run.id);
+      if (row) costNote = `Live run — ${row.transcribeIn + row.compareIn} in / ${row.transcribeOut + row.compareOut} out tokens ≈ ${money(dollars(row.transcribeIn + row.compareIn, row.transcribeOut + row.compareOut))}.`;
+    } catch {}
+    stage.innerHTML += `<div class="panel">${verdictHTML(rs.verdict, rs.verdictSummary)}${sourcesHTML(rs.sources)}
+      <p class="meta">${rs.queries && rs.queries.length ? "Searched for: " + rs.queries.map(esc).join(" · ") + "<br>" : ""}${esc(costNote)}</p>
+      <div class="btnrow"><a href="./"><button class="ghost">Open in the workbench</button></a></div></div>`;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "The run failed.";
+    const signin = /Sign in required/i.test(msg)
+      ? `<br><a href="./">Sign in on the main app first, then come back.</a>` : "";
+    stage.innerHTML = `<div class="panel"><p class="err">${esc(msg)}${signin}</p></div>`;
+  }
+}
+
+document.getElementById("file").addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (f) void runLive(f);
+  e.target.value = "";
+});
+
+async function init() {
+  try {
+    const res = await fetch("./samples/samples.json");
+    SAMPLES = await res.json();
+  } catch {
+    document.getElementById("cards").innerHTML = `<p class="err">Samples failed to load.</p>`;
+    return;
+  }
+  const cards = document.getElementById("cards");
+  cards.innerHTML = "";
+  for (const s of SAMPLES) {
+    const b = document.createElement("button");
+    b.className = "card";
+    b.innerHTML = `<img src="${esc(s.image)}" alt="${esc(s.label)}" loading="lazy" />
+      <span class="t">${esc(s.label)}<small>${esc(s.language || "")}</small></span>`;
+    b.onclick = () => void runSample(s.id);
+    cards.appendChild(b);
+  }
+  const m = location.hash.match(/^#sample-(\d+)$/);
+  if (m) void runSample(Number(m[1]));
+}
+void init();
+</script>
+</body>
+</html>
+
