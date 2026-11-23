@@ -139,6 +139,40 @@ async function completeOpenAICompatible(
   };
 }
 
+// Brave wraps match terms in <strong> tags and leaves HTML entities in
+// descriptions. Strip markup and decode entities so stored snippets are
+// plain text; clients escape on render.
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  "#39": "'",
+  nbsp: " ",
+};
+
+export function cleanSearchText(s: string): string {
+  let t = s ?? "";
+  t = t.replace(
+    /<\/?(strong|em|b|i|u|a|span|div|p|br|ul|ol|li|h[1-6]|code|blockquote)\b[^>]*>/gi,
+    ""
+  );
+  for (let i = 0; i < 2; i++) {
+    t = t.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e: string) => {
+      if (e[0] === "#") {
+        const cp =
+          e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+        return Number.isSafeInteger(cp) && cp > 0 && cp <= 0x10ffff
+          ? String.fromCodePoint(cp)
+          : m;
+      }
+      return NAMED_ENTITIES[e] ?? m;
+    });
+  }
+  return t.replace(/\s+/g, " ").trim();
+}
+
 export async function braveSearch(apiKey: string, query: string): Promise<WebResult[]> {
   const url = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=9`;
   const res = await fetch(url, {
@@ -159,9 +193,9 @@ export async function braveSearch(apiKey: string, query: string): Promise<WebRes
     };
   };
   return (body.web?.results ?? []).map((r) => ({
-    title: r.title ?? "(untitled)",
+    title: cleanSearchText(r.title ?? "(untitled)"),
     url: r.url ?? null,
     source: r.meta_url?.hostname ?? null,
-    snippet: r.description ?? null,
+    snippet: r.description == null ? null : cleanSearchText(r.description),
   }));
 }

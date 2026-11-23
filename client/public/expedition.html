@@ -37,7 +37,36 @@
     background: #000; }
   .card .t { padding: 10px 12px; font-size: 14px; }
   .card .t small { display: block; color: var(--dim); margin-top: 2px; }
-  .drop { border: 2px dashed var(--border); border-radius: var(--radius);
+  h1.pitch { font-size: 30px; line-height: 1.2; margin: 20px 0 4px;
+    letter-spacing: .01em; }
+  .hero { position: relative; }
+  .hero::after { content: ""; position: absolute; inset: 140px 0 -30px;
+    background: radial-gradient(60% 90px at 50% 0%, rgba(201,162,39,.13), transparent 70%);
+    pointer-events: none; }
+  .meter, .drop { background: linear-gradient(165deg, #241b0e, #171106);
+    border-color: #6b5320; }
+  h2 { border-bottom: 1px solid #6b5320; padding-bottom: 8px; }
+  h2::before { content: "◆ "; color: var(--gold); font-size: 12px; }
+  .verdict { display: inline-block; border: 3px double currentColor;
+    border-radius: 6px; padding: 6px 14px; transform: rotate(-1.5deg);
+    letter-spacing: .06em; }
+  .v-un { color: var(--gold); }
+  .seal-panel { background: linear-gradient(165deg, #241b0e, #171106);
+    border-color: #6b5320; }
+  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .strip button { position: relative; overflow: hidden; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 0; cursor: pointer; background: #000;
+    aspect-ratio: 4 / 3; }
+  .strip button:hover { border-color: var(--gold); }
+  .strip img { width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .35s ease; }
+  .strip button:hover img { transform: scale(1.05); }
+  .strip .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px;
+    background: linear-gradient(transparent, rgba(4,8,16,.92)); text-align: left;
+    font-size: 14px; font-weight: 600; }
+  .strip .cap small { display: block; font-weight: 400; font-size: 12px;
+    color: var(--dim); }
+  .drop { display: block; border: 2px dashed var(--border); border-radius: var(--radius);
     padding: 28px 16px; text-align: center; color: var(--dim); font-size: 15px;
     cursor: pointer; }
   .drop:hover { border-color: var(--accent); color: var(--text); }
@@ -65,6 +94,13 @@
   .sources p { margin: 2px 0 0; color: var(--dim); font-size: 12px; }
   .meta { font-size: 12px; color: var(--dim); margin-top: 10px; }
   .btnrow { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  details.qa { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+  details.qa summary { cursor: pointer; font-size: 14px; font-weight: 600; }
+  details.qa p { font-size: 13px; color: var(--dim); line-height: 1.6; margin: 6px 0 2px; }
+  .askrow { display: flex; gap: 8px; margin-top: 12px; }
+  .askrow input { flex: 1; min-width: 0; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 14px; padding: 8px 12px; }
+  .askout { margin-top: 10px; font-size: 14px; line-height: 1.6; }
   button.act { background: var(--accent); border: 0; border-radius: 8px;
     color: #0b1526; font-weight: 600; font-size: 14px; padding: 9px 16px;
     cursor: pointer; }
@@ -80,29 +116,47 @@
     overflow: hidden; margin: 8px 0 12px; }
   .scanbar i { display: block; height: 100%; width: 0; background: var(--accent);
     transition: width .2s; }
+  .scanning { border-color: var(--accent) !important;
+    animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 rgba(95,143,180,0); }
+    50% { box-shadow: 0 0 18px rgba(95,143,180,.45); } }
+  .verdict { animation: pop .45s ease-out; }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; } }
+  .budgetbar { height: 10px; background: var(--border); border-radius: 5px;
+    overflow: hidden; margin-top: 10px; }
+  .budgetbar i { display: block; height: 100%; width: 3px;
+    background: var(--gold); border-radius: 5px; }
+  @media (max-width: 640px) {
+    .tag { font-size: 17px; }
+    .verdict { font-size: 19px; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
-    <img class="banner" src="./logo.jpg" alt="Helmut Expeditions" />
+    <div class="meter" style="margin-bottom:14px">
+      <span><b>~$0.005</b> a plate</span>
+      <span><b>~2,000</b> plates per $10</span>
+      <small>Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
+      <div class="budgetbar" style="flex-basis:100%"><i title="one plate"></i></div>
+      <small style="flex-basis:100%">That gold sliver is one plate. The bar is $10.</small>
+    </div>
+    <img class="banner" src="./expedition-hero.jpg" alt="Helmut Expeditions" />
+    <h1 class="pitch">History left clues. Find them.</h1>
     <p class="tag">Snap a manuscript photo. Join the dig. The page gets
     transcribed blind — from the photo alone — then checked against
     what's published.</p>
     <p class="sub">Three real expeditions below, replayed free. Or drop
     your own plate and run it live.</p>
-    <div class="meter">
-      <span><b>~$0.005</b> a plate</span>
-      <span><b>~2,000</b> plates per $10</span>
-      <small>Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
-    </div>
   </div>
 
   <h2>Pick an expedition</h2>
-  <div class="cards" id="cards"><p class="sub">Loading samples…</p></div>
+  <div class="strip" id="strip"><p class="sub">Loading samples…</p></div>
 
   <h2>Or drop your own plate</h2>
-  <label class="drop" id="drop">Tap to choose a photo — JPG or PNG, one plate per run.
+  <label class="drop" id="drop"><b>Feed it a mystery.</b><br />Drop a plate photo — JPG or PNG, one plate per run.
     <input type="file" id="file" accept="image/jpeg,image/png" />
   </label>
 
@@ -113,7 +167,7 @@
     <b>2.</b> cross-check against published references found on the web.
     Uncertainties stay marked; gaps stay gaps. A "no match" verdict means
     <i>no match in what was checked</i> — never "unpublished". Full workbench:
-    <a href="./">helmutreads.com</a>
+    <a href="./">helmutreads.com</a> · Built for the Muse Ember Hackathon.
   </footer>
 </div>
 <script>
@@ -124,8 +178,85 @@ const money = (n) => "$" + n.toFixed(n < 0.01 && n > 0 ? 4 : 2);
 const stage = document.getElementById("stage");
 let SAMPLES = [];
 
+const FEATURED = {
+  4: [
+    ["What script is this?",
+     "The blind read could not determine it — marked Uncertain. Most ink is faint or fragmented at this resolution; only isolated groups (NEY, KA, TEN, HTN) came through."],
+    ["Why 'uncharted'?",
+     "Three searches found only generic lookalikes. Nothing matching this plate's caption or letter groups — so no match found, not unpublished."],
+  ],
+  11: [
+    ["What does the stamp say?",
+     "'Musik-Bibliothek' above 'Pforta.' — both lines read clear."],
+    ["Where is Pforta?",
+     "Landesschule Pforta in Saxony-Anhalt — a boarding school whose historic music library holds 448 titles, per the catalog entry found in search."],
+  ],
+  13: [
+    ["What text is this?",
+     "The opening of Dante's Paradiso, Canto I — identified from the rubric and the Beatrice miniature; the column ends 'disposto a salire alle stelle' (disposed to rise to the stars)."],
+    ["Why only partial?",
+     "Editions confirm the text, but no published record of this specific leaf — its rubric, layout, border and miniature — turned up. The blind read stands unchecked."],
+  ],
+};
+
+function featuredHTML(id) {
+  const qs = FEATURED[id] || [];
+  if (!qs.length) return "";
+  return `<h3 style="margin-top:14px">Questions this run answers</h3>` + qs.map(([q, a]) =>
+    `<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+}
+
+function dossierMD(d) {
+  const L = [];
+  L.push("# Expedition dossier — " + d.label, "");
+  L.push("- Date: " + d.date, "- Language: " + (d.language || "Unknown"));
+  L.push("- Verdict: " + d.verdict + " — " + (d.verdictSummary || ""), "");
+  L.push("## Blind transcription (" + d.lineCount + " lines)");
+  for (const l of d.lines) L.push("- [" + (l.legibility || "partial") + "] " + (l.text || "…"));
+  if (d.lineCount > d.lines.length) L.push("- …and " + (d.lineCount - d.lines.length) + " more lines");
+  if (d.uncertain && d.uncertain.length) { L.push("", "Uncertain readings:"); for (const u of d.uncertain) L.push("- " + u); }
+  L.push("", "## Research");
+  if (d.queries && d.queries.length) L.push("Searched for: " + d.queries.join(" · "), "");
+  if (d.sources && d.sources.length) {
+    L.push("Sources checked:");
+    d.sources.forEach((s, i) => L.push(`[${i + 1}] ${cleanText(s.title)}${s.url ? " <" + s.url + ">" : ""}`));
+    L.push("");
+  }
+  L.push("## Cost", d.costNote, "", "## Honesty note",
+    "Blind-first method: transcribed from pixels alone, then checked against published references. Gaps stay marked. A \"no match\" verdict means no match in what was checked — never \"unpublished\". Verify before citing. Produced with HelmutReads (https://helmutreads.com).", "");
+  return L.join("\n");
+}
+
+function downloadDossier(filename, text) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/markdown" }));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// Search-provider hygiene (mirrors server cleanSearchText): Brave wraps
+// match terms in <strong> tags and leaves entities in descriptions. Clean
+// before esc() so old stored runs render as plain text too.
+const ENTITIES = {amp:"&",lt:"<",gt:">",quot:'"',apos:"'","#39":"'",nbsp:" "};
+function cleanText(s) {
+  let t = String(s ?? "");
+  t = t.replace(/<\/?(strong|em|b|i|u|a|span|div|p|br|ul|ol|li|h[1-6]|code|blockquote)\b[^>]*>/gi, "");
+  for (let i = 0; i < 2; i++) {
+    t = t.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e) => {
+      if (e[0] === "#") {
+        const cp = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+        return Number.isSafeInteger(cp) && cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+      }
+      return ENTITIES[e] ?? m;
+    });
+  }
+  return t.replace(/\s+/g, " ").trim();
+}
 
 async function api(action, args) {
   const res = await fetch("./actions", {
@@ -149,12 +280,12 @@ function verdictHTML(v, summary) {
 function sourcesHTML(sources) {
   if (!sources || !sources.length) return "";
   return `<ul class="sources">${sources.map((s, i) =>
-    `<li>[${i + 1}] ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.title)}</a>` : esc(s.title)}${s.snippet ? `<p>${esc(s.snippet)}</p>` : ""}</li>`
+    `<li>[${i + 1}] ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(cleanText(s.title))}</a>` : esc(cleanText(s.title))}${s.snippet ? `<p>${esc(cleanText(s.snippet))}</p>` : ""}</li>`
   ).join("")}</ul>`;
 }
 
-async function playExpedition({ img, language, summary, lines, lineCount, verdict, verdictSummary, queries, sources, costNote, link }) {
-  stage.innerHTML = `<div class="panel"><h3>Phase 1 — blind transcription</h3>
+async function playExpedition({ id, img, language, summary, lines, lineCount, verdict, verdictSummary, queries, sources, costNote, link }) {
+  stage.innerHTML = `<div class="panel scanning" id="p1"><h3>Phase 1 — blind transcription</h3>
     <img class="plate" src="${esc(img)}" alt="plate" />
     <div class="scanbar"><i id="scan"></i></div>
     <div class="lines" id="lines"></div>
@@ -178,6 +309,7 @@ async function playExpedition({ img, language, summary, lines, lineCount, verdic
     div.innerHTML = `<span class="leg-illegible">…and ${lineCount - lines.length} more lines</span>`;
     box.appendChild(div);
   }
+  document.getElementById("p1").classList.remove("scanning");
   await sleep(400);
   const p2 = document.getElementById("p2");
   p2.style.display = "";
@@ -186,11 +318,23 @@ async function playExpedition({ img, language, summary, lines, lineCount, verdic
     queries && queries.length ? "Searched for: " + queries.join(" · ") : "Search complete.";
   await sleep(400);
   document.getElementById("presult").innerHTML =
-    `<div class="panel">${verdictHTML(verdict, verdictSummary)}${sourcesHTML(sources)}
-    <p class="meta">${esc(costNote)}</p>
-    <div class="btnrow"><button class="ghost" id="copylink">Copy expedition link</button></div></div>`;
+    `<div class="panel seal-panel">${verdictHTML(verdict, verdictSummary)}${sourcesHTML(sources)}
+    <p class="meta">${esc(costNote)}</p>${featuredHTML(id)}
+    <div class="btnrow"><button class="ghost" id="copylink">Copy expedition link</button><button class="ghost" id="dossier">Download dossier</button></div></div>`;
   document.getElementById("copylink").onclick = async () => {
     try { await navigator.clipboard.writeText(link); } catch {}
+  };
+  document.getElementById("dossier").onclick = () => {
+    const s = SAMPLES.find((x) => x.id === id);
+    if (!s) return;
+    downloadDossier("helmut-dossier-" + id + ".md", dossierMD({
+      label: s.label, date: new Date().toISOString().slice(0, 10) + " (replay)",
+      language: s.language, summary: s.summary, lines: s.lines,
+      lineCount: s.lineCount, uncertain: s.uncertain || [],
+      verdict: s.verdict, verdictSummary: s.verdictSummary,
+      queries: s.queries || [], sources: s.sources || [],
+      costNote: "Replayed expedition — $0 marginal cost.",
+    }));
   };
   stage.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -200,7 +344,7 @@ async function runSample(id) {
   if (!s) return;
   location.hash = "sample-" + id;
   await playExpedition({
-    img: s.image, language: s.language, summary: s.summary,
+    id: s.id, img: s.image, language: s.language, summary: s.summary,
     lines: s.lines, lineCount: s.lineCount, verdict: s.verdict,
     verdictSummary: s.verdictSummary, queries: s.queries, sources: s.sources,
     costNote: "Replayed expedition — this viewing cost $0. A live run averages ~$0.005.",
@@ -228,7 +372,7 @@ async function runLive(file) {
     const { dataBase64, mimeType } = await fileToBase64(file);
     const t = await api("transcribePlate", { image: { dataBase64, mimeType }, note: "", provenance: "" });
     const run = t.run;
-    stage.innerHTML = `<div class="panel"><h3>Phase 1 — blind transcription</h3>
+    stage.innerHTML = `<div class="panel scanning"><h3>Phase 1 — blind transcription</h3>
       <div class="lines">${run.transcription.lines.slice(0, 14).map((l) =>
         `<div><span class="leg-${esc(l.legibility)}">${esc(l.text) || "…"}</span></div>`).join("")}</div>
       <p class="meta">${esc(run.transcription.language)} · ${esc(run.transcription.summary)}</p></div>
@@ -241,9 +385,31 @@ async function runLive(file) {
       const row = (u.byRun || []).find((x) => x.id === run.id);
       if (row) costNote = `Live run — ${row.transcribeIn + row.compareIn} in / ${row.transcribeOut + row.compareOut} out tokens ≈ ${money(dollars(row.transcribeIn + row.compareIn, row.transcribeOut + row.compareOut))}.`;
     } catch {}
-    stage.innerHTML += `<div class="panel">${verdictHTML(rs.verdict, rs.verdictSummary)}${sourcesHTML(rs.sources)}
+    stage.innerHTML += `<div class="panel seal-panel">${verdictHTML(rs.verdict, rs.verdictSummary)}${sourcesHTML(rs.sources)}
       <p class="meta">${rs.queries && rs.queries.length ? "Searched for: " + rs.queries.map(esc).join(" · ") + "<br>" : ""}${esc(costNote)}</p>
-      <div class="btnrow"><a href="./"><button class="ghost">Open in the workbench</button></a></div></div>`;
+      <div class="btnrow"><a href="./"><button class="ghost">Open in the workbench</button></a><button class="ghost" id="dossierL">Download dossier</button></div>
+      <div class="askrow"><input id="askq" maxlength="1000" placeholder="Ask about this run — or dig deeper" /><button class="act" id="askbtn">Ask</button></div>
+      <div class="askout" id="askout"></div></div>`;
+    document.getElementById("dossierL").onclick = () => downloadDossier("helmut-dossier-" + run.id + ".md", dossierMD({
+      label: "Run " + run.id, date: new Date().toISOString().slice(0, 10),
+      language: run.transcription.language, summary: run.transcription.summary,
+      lines: run.transcription.lines, lineCount: run.transcription.lines.length,
+      uncertain: run.transcription.uncertainReadings || [],
+      verdict: rs.verdict, verdictSummary: rs.verdictSummary,
+      queries: rs.queries || [], sources: rs.sources || [], costNote,
+    }));
+    const doAsk = async () => {
+      const q = document.getElementById("askq").value.trim();
+      if (!q) return;
+      const out = document.getElementById("askout");
+      out.textContent = "Asking…";
+      try {
+        const r = await api("askRunQuestion", { runId: run.id, question: q });
+        out.innerHTML = `<p style="white-space:pre-wrap;margin:0">${esc(r.answer)}</p>${sourcesHTML(r.sources)}${r.searched ? `<p class="meta">Searched for: ${r.queries.map(esc).join(" · ") || "—"}</p>` : ""}`;
+      } catch (err) { out.innerHTML = `<p class="err">${esc(err instanceof Error ? err.message : "The question failed.")}</p>`; }
+    };
+    document.getElementById("askbtn").onclick = () => void doAsk();
+    document.getElementById("askq").addEventListener("keydown", (e) => { if (e.key === "Enter") void doAsk(); });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "The run failed.";
     const signin = /Sign in required/i.test(msg)
@@ -263,18 +429,23 @@ async function init() {
     const res = await fetch("./samples/samples.json");
     SAMPLES = await res.json();
   } catch {
-    document.getElementById("cards").innerHTML = `<p class="err">Samples failed to load.</p>`;
+    document.getElementById("strip").innerHTML = `<p class="err">Samples failed to load.</p>`;
     return;
   }
-  const cards = document.getElementById("cards");
-  cards.innerHTML = "";
+  const strip = document.getElementById("strip");
+  strip.innerHTML = "";
+  const framings = {
+    4: "Investigate an illustrated invocation",
+    11: "Follow a provenance clue",
+    13: "Decode an illuminated page",
+  };
   for (const s of SAMPLES) {
     const b = document.createElement("button");
-    b.className = "card";
-    b.innerHTML = `<img src="${esc(s.image)}" alt="${esc(s.label)}" loading="lazy" />
-      <span class="t">${esc(s.label)}<small>${esc(s.language || "")}</small></span>`;
+    b.setAttribute("aria-label", s.label + " — " + (framings[s.id] || "expedition"));
+    b.innerHTML = `<img src="${esc(s.image)}" alt="" loading="lazy" />
+      <span class="cap">${esc(s.label)}<small>${esc(framings[s.id] || s.language || "")}</small></span>`;
     b.onclick = () => void runSample(s.id);
-    cards.appendChild(b);
+    strip.appendChild(b);
   }
   const m = location.hash.match(/^#sample-(\d+)$/);
   if (m) void runSample(Number(m[1]));

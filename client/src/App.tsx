@@ -354,19 +354,17 @@ function ResearchView({ r, run, onSubmit, submitting }: { r: Research; run: Run;
                     rel="noreferrer"
                     className="font-medium text-[var(--accent)] underline decoration-dotted underline-offset-2"
                   >
-                    {s.title}
+                    {cleanText(s.title)}
                   </a>
                 ) : (
-                  <span className="font-medium text-[var(--text)]">{s.title}</span>
+                  <span className="font-medium text-[var(--text)]">{cleanText(s.title)}</span>
                 )}
                 {s.source && (
                   <span className="text-[var(--dim)]"> — {s.source}</span>
                 )}
                 {s.snippet && (
                   <span className="block text-xs leading-relaxed text-[var(--dim)]">
-                    {s.snippet.length > 220
-                      ? `${s.snippet.slice(0, 220)}…`
-                      : s.snippet}
+                    {snippetPreview(s.snippet)}
                   </span>
                 )}
               </li>
@@ -384,6 +382,19 @@ function ResearchView({ r, run, onSubmit, submitting }: { r: Research; run: Run;
 
 function fmtInt(n: number): string {
   return n.toLocaleString("en-US");
+}
+
+// Search-provider hygiene: Brave wraps match terms in <strong> tags and
+// leaves entities in descriptions. Parse-and-extract keeps plain text.
+function cleanText(s: string): string {
+  const d = document.createElement("div");
+  d.innerHTML = s ?? "";
+  return (d.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
+function snippetPreview(snippet: string): string {
+  const t = cleanText(snippet);
+  return t.length > 220 ? `${t.slice(0, 220)}…` : t;
 }
 
 function useStoredNumber(key: string, fallback: string): [string, (v: string) => void] {
@@ -899,16 +910,16 @@ function AskBox({ runId }: { runId: number }) {
                       rel="noreferrer"
                       className="font-medium text-[var(--accent)] underline decoration-dotted underline-offset-2"
                     >
-                      [{i + 1}] {s.title}
+                      [{i + 1}] {cleanText(s.title)}
                     </a>
                   ) : (
                     <span className="font-medium text-[var(--text)]">
-                      [{i + 1}] {s.title}
+                      [{i + 1}] {cleanText(s.title)}
                     </span>
                   )}
                   {s.snippet && (
                     <span className="block text-xs leading-relaxed text-[var(--dim)]">
-                      {s.snippet.length > 220 ? `${s.snippet.slice(0, 220)}…` : s.snippet}
+                      {snippetPreview(s.snippet)}
                     </span>
                   )}
                 </li>

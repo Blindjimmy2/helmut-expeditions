@@ -7,7 +7,7 @@
     "build:client": "vite build",
     "build": "npm run build:client",
     "start": "node server/local/serve.ts",
-    "test": "node --test tests/provenance.test.js tests/review.test.js tests/runs-insert.test.js tests/ask.test.js"
+    "test": "node --test tests/provenance.test.js tests/review.test.js tests/runs-insert.test.js tests/ask.test.js tests/search-clean.test.js"
   },
   "dependencies": {
     "@tanstack/react-query": "5.100.10",
