@@ -1,0 +1,44 @@
+{
+  "name": "helmut-reads",
+  "main": "server/worker/worker.ts",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./client/dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "helmut-reads",
+      "database_id": "ec3b209c-fb19-465c-91ad-d167447e0a2a"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "helmut-reads-files"
+    }
+  ],
+  "vars": {
+    "BILLING_MODE": "live",
+    "APP_ORIGIN": "https://helmutreads.com",
+    "COOKIE_SECURE": "true",
+    "STRIPE_ACCOUNT_ID": "acct_1UK4CpCHzm3VJTCj",
+    "STRIPE_RESEARCHER_PRICE": "price_1Ue6eaCHzm3VJTCjUuLnzqeQ",
+    "STRIPE_INSTITUTION_PRICE": "price_1Ue6hFCHzm3VJTCjDM2Y7Qyp",
+    "STRIPE_PORTAL_CONFIGURATION": "",
+    "FREE_RUN_LIMIT": "10",
+    "AUTH_FROM_EMAIL": "login@helmutreads.com",
+    "ADMIN_EMAILS": "cwb135@gmail.com",
+    "MODEL_PROVIDER": "openai-compatible",
+    "MODEL_NAME": "muse-ember-1.0",
+    "MODEL_BASE_URL": "https://api.meta.ai/v1"
+  },
+  "keep_vars": true,
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ]
+}

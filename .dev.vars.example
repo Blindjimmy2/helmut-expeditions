@@ -1,0 +1,17 @@
+# Local `wrangler dev` vars. Copy to `.dev.vars` (never commit).
+# Same names as .env; wrangler merges these with wrangler.jsonc vars.
+MODEL_PROVIDER=openai-compatible
+MODEL_API_KEY=
+MODEL_NAME=muse-ember-1.0
+MODEL_BASE_URL=https://api.meta.ai/v1
+SEARCH_API_KEY=
+AUTH_PEPPER=dev-pepper-change-me
+AUTH_FROM_EMAIL=login@helmutreads.com
+AUTH_DEV_PRINT_CODE=false
+BILLING_MODE=test
+STRIPE_SECRET_KEY=
+STRIPE_RESEARCHER_PRICE=
+STRIPE_INSTITUTION_PRICE=
+STRIPE_WEBHOOK_SECRET=
+FREE_RUN_LIMIT=10
+APP_ORIGIN=http://localhost:8787

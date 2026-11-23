@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# secrets — never commit these
+.env
+.dev.vars
+
+# local databases
+app.db*
+*.sqlite
+*.sqlite-journal
+
+# build output (rebuild with npm run build:client)
+dist/
+client/dist/
+client/dist-cvm/
+
+# typescript incremental caches
+*.tsbuildinfo*
+
+# IDE markers
+.xmds-icon
+
+# wrangler local state
+.wrangler/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
