@@ -27,6 +27,7 @@ const OPEN_ACTIONS = new Set([
   "verifySignInCode",
   "currentUser",
   "logout",
+  "liveMeter",
 ]);
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",

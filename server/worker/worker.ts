@@ -6,7 +6,7 @@ import { handleWebhook } from "../shared/billing.ts";
 import { createWorkerCtx, readWorkerBlob } from "./ctx.ts";
 import { workerPlatform, type WorkerEnv } from "./platform.ts";
 
-const OPEN_ACTIONS = new Set(["requestSignInCode", "verifySignInCode", "currentUser", "logout"]);
+const OPEN_ACTIONS = new Set(["requestSignInCode", "verifySignInCode", "currentUser", "logout", "liveMeter"]);
 
 function json(data: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {

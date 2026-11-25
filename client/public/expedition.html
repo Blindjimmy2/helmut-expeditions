@@ -137,11 +137,12 @@
 <div class="wrap">
   <div class="hero">
     <div class="meter" style="margin-bottom:14px">
-      <span><b>~$0.005</b> a plate</span>
-      <span><b>~2,000</b> plates per $10</span>
-      <small>Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
-      <div class="budgetbar" style="flex-basis:100%"><i title="one plate"></i></div>
+      <span><b id="m-plate">~$0.005</b> a plate</span>
+      <span><b id="m-per10">~2,000</b> plates per $10</span>
+      <small id="m-basis">Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
+      <div class="budgetbar" style="flex-basis:100%"><i id="m-sliver" title="one plate"></i></div>
       <small style="flex-basis:100%">That gold sliver is one plate. The bar is $10.</small>
+      <small id="m-event" style="flex-basis:100%"></small>
     </div>
     <img class="banner" src="./expedition-hero.jpg" alt="Helmut Expeditions" />
     <h1 class="pitch">History left clues. Find them.</h1>
@@ -424,7 +425,33 @@ document.getElementById("file").addEventListener("change", (e) => {
   e.target.value = "";
 });
 
+async function liveMeter() {
+  try {
+    const res = await api("liveMeter", {});
+    const m = res.meter;
+    if (!m || !m.plates) return;
+    const out = m.outputTokens + m.reasoningTokens;
+    const perPlate = dollars(m.inputTokens / m.plates, out / m.plates);
+    if (!(perPlate > 0)) return;
+    const avgIn = m.inputTokens / m.plates, avgOut = out / m.plates;
+    document.getElementById("m-plate").textContent = "~" + money(perPlate);
+    document.getElementById("m-per10").textContent = "~" + Math.round(10 / perPlate).toLocaleString();
+    document.getElementById("m-basis").textContent =
+      `Live average over ${m.plates} plate${m.plates === 1 ? "" : "s"} · ~${(avgIn / 1000).toFixed(1)}K in / ~${(avgOut / 1000).toFixed(1)}K out tokens per plate`;
+    const sliver = document.getElementById("m-sliver");
+    sliver.style.width = "max(3px, " + ((perPlate / 10) * 100).toFixed(2) + "%)";
+    sliver.title = "one plate ≈ " + money(perPlate);
+    const e = m.event;
+    if (e) {
+      const eSpend = dollars(e.inputTokens, e.outputTokens + e.reasoningTokens);
+      document.getElementById("m-event").textContent =
+        `Hackathon window: ${e.plates} plate${e.plates === 1 ? "" : "s"} · ${money(eSpend)} of $10`;
+    }
+  } catch { /* static fallback stays */ }
+}
+
 async function init() {
+  void liveMeter();
   try {
     const res = await fetch("./samples/samples.json");
     SAMPLES = await res.json();

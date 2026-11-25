@@ -36,6 +36,7 @@ import { askRunQuestion as askRun } from "../shared/ask.ts";
 import { provenanceGate } from "../shared/provenance.ts";
 import { reviewQueue, reviewRun, submitForReview } from "../shared/review.ts";
 import * as schema from "./schema.ts";
+import type { SQLVal } from "../shared/platform.ts";
 
 import { isAdmin as isAdminUser } from "../shared/review.ts";
 
@@ -43,6 +44,11 @@ function requireUser(ctx: Ctx): NonNullable<Ctx["user"]> {
   if (!ctx.user) throw Object.assign(new Error("Sign in required."), { status: 401 });
   return ctx.user;
 }
+
+// Cost-meter constants: the meter reports Ember usage only, and the event
+// window matches the hackathon build window (Nov 23, 9:00 AM ET).
+export const METER_MODEL = "muse-ember-1.0";
+export const METER_EVENT_START_MS = Date.UTC(2026, 10, 23, 14, 0, 0);
 
 // ---------------------------------------------------------------------------
 // Shared shapes
@@ -393,6 +399,73 @@ export const Actions = {
       ctx.invalidateQueries();
       const updated = { ...row, research: JSON.stringify(research), status: "complete" as const, researchedAt: now };
       return { run: await toRunObject(ctx, updated) };
+    },
+  }),
+
+  liveMeter: defineAction({
+    description:
+      "Public aggregate Ember usage for the expedition cost meter. No auth, no user data — totals only.",
+    request: z.object({}),
+    response: z.object({
+      meter: z.object({
+        plates: z.number(),
+        inputTokens: z.number(),
+        outputTokens: z.number(),
+        reasoningTokens: z.number(),
+        searches: z.number(),
+        event: z.object({
+          plates: z.number(),
+          inputTokens: z.number(),
+          outputTokens: z.number(),
+          reasoningTokens: z.number(),
+          searches: z.number(),
+        }),
+      }),
+    }),
+    async handler(ctx) {
+      const raw = ctx.platform.raw;
+      const row = async (sql: string, ...params: SQLVal[]): Promise<Record<string, number>> =>
+        ((await raw.prepare(sql).get(...params)) ?? {}) as Record<string, number>;
+      const num = (r: Record<string, number>, key: string): number => r[key] ?? 0;
+      // Plate tokens join to completed runs only, so failed calls (run_id
+      // null) and Q&A ('ask') never inflate the $/plate figure.
+      const base = `FROM usage_events u JOIN runs r ON r.id = u.run_id
+        WHERE u.action IN ('transcribe','compare') AND u.model = ? AND r.status = 'complete'`;
+      const plates = num(await row(`SELECT COUNT(*) AS n FROM runs WHERE status = 'complete'`), "n");
+      const toks = await row(
+        `SELECT COALESCE(SUM(u.input_tokens),0) AS i, COALESCE(SUM(u.output_tokens),0) AS o, COALESCE(SUM(u.reasoning_tokens),0) AS r ${base}`,
+        METER_MODEL,
+      );
+      const searches = num(await row(`SELECT COUNT(*) AS n FROM usage_events WHERE action = 'search'`), "n");
+      const eplates = num(
+        await row(`SELECT COUNT(*) AS n FROM runs WHERE status = 'complete' AND created_at >= ?`, METER_EVENT_START_MS),
+        "n",
+      );
+      const etoks = await row(
+        `SELECT COALESCE(SUM(u.input_tokens),0) AS i, COALESCE(SUM(u.output_tokens),0) AS o, COALESCE(SUM(u.reasoning_tokens),0) AS r ${base} AND u.created_at >= ?`,
+        METER_MODEL,
+        METER_EVENT_START_MS,
+      );
+      const esearches = num(
+        await row(`SELECT COUNT(*) AS n FROM usage_events WHERE action = 'search' AND created_at >= ?`, METER_EVENT_START_MS),
+        "n",
+      );
+      return {
+        meter: {
+          plates,
+          inputTokens: num(toks, "i"),
+          outputTokens: num(toks, "o"),
+          reasoningTokens: num(toks, "r"),
+          searches,
+          event: {
+            plates: eplates,
+            inputTokens: num(etoks, "i"),
+            outputTokens: num(etoks, "o"),
+            reasoningTokens: num(etoks, "r"),
+            searches: esearches,
+          },
+        },
+      };
     },
   }),
 
