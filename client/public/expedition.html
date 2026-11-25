@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
-<title>Helmut Expeditions — snap a plate, join the dig</title>
+<title>Helmut Expeditions — snap a page, join the dig</title>
 <link rel="icon" type="image/png" href="./favicon.png" />
 <style>
   :root {
@@ -137,36 +137,36 @@
 <div class="wrap">
   <div class="hero">
     <div class="meter" style="margin-bottom:14px">
-      <span><b id="m-plate">~$0.005</b> a plate</span>
-      <span><b id="m-per10">~2,000</b> plates per $10</span>
-      <small id="m-basis">Measured over 17 live Ember runs · ~5.5K in / ~9.3K out tokens per plate</small>
-      <div class="budgetbar" style="flex-basis:100%"><i id="m-sliver" title="one plate"></i></div>
-      <small style="flex-basis:100%">That gold sliver is one plate. The bar is $10.</small>
+      <span><b id="m-plate">~$0.005</b> a page</span>
+      <span><b id="m-per10">~2,000</b> pages per $10</span>
+      <small id="m-basis">Measured over 17 live scans · ~5.5K words read / ~9.3K written per page</small>
+      <div class="budgetbar" style="flex-basis:100%"><i id="m-sliver" title="one page"></i></div>
+      <small style="flex-basis:100%">That gold sliver is one page. The bar is $10.</small>
       <small id="m-event" style="flex-basis:100%"></small>
     </div>
     <img class="banner" src="./expedition-hero.jpg" alt="Helmut Expeditions" />
     <h1 class="pitch">History left clues. Find them.</h1>
-    <p class="tag">Snap a manuscript photo. Join the dig. The page gets
-    transcribed blind — from the photo alone — then checked against
-    what's published.</p>
+    <p class="tag">Snap a photo of any old book page — scholars call it a
+    plate. Join the dig. It's read cold, from your photo alone, then
+    compared against every known copy.</p>
     <p class="sub">Three real expeditions below, replayed free. Or drop
-    your own plate and run it live.</p>
+    your own page and scan it live.</p>
   </div>
 
   <h2>Pick an expedition</h2>
   <div class="strip" id="strip"><p class="sub">Loading samples…</p></div>
 
-  <h2>Or drop your own plate</h2>
-  <label class="drop" id="drop"><b>Feed it a mystery.</b><br />Drop a plate photo — JPG or PNG, one plate per run.
+  <h2>Or drop your own page</h2>
+  <label class="drop" id="drop"><b>Feed it a mystery.</b><br />Drop a page photo — JPG or PNG, one page per scan.
     <input type="file" id="file" accept="image/jpeg,image/png" />
   </label>
 
   <div id="stage"></div>
 
   <footer>
-    How it works: <b>1.</b> blind transcription from pixels alone.
-    <b>2.</b> cross-check against published references found on the web.
-    Uncertainties stay marked; gaps stay gaps. A "no match" verdict means
+    How it works: <b>1.</b> a cold read from your photo alone.
+    <b>2.</b> compared against every known copy on the web.
+    Unsure bits stay marked; gaps stay gaps. A "no match" result means
     <i>no match in what was checked</i> — never "unpublished". Full workbench:
     <a href="./">helmutreads.com</a> · Built for the Muse Ember Hackathon.
   </footer>
@@ -184,7 +184,7 @@ const FEATURED = {
     ["What script is this?",
      "The blind read could not determine it — marked Uncertain. Most ink is faint or fragmented at this resolution; only isolated groups (NEY, KA, TEN, HTN) came through."],
     ["Why 'uncharted'?",
-     "Three searches found only generic lookalikes. Nothing matching this plate's caption or letter groups — so no match found, not unpublished."],
+     "Three searches found only generic lookalikes. Nothing matching this page's caption or letter groups — so no match found, not unpublished."],
   ],
   11: [
     ["What does the stamp say?",
@@ -203,16 +203,16 @@ const FEATURED = {
 function featuredHTML(id) {
   const qs = FEATURED[id] || [];
   if (!qs.length) return "";
-  return `<h3 style="margin-top:14px">Questions this run answers</h3>` + qs.map(([q, a]) =>
+  return `<h3 style="margin-top:14px">Questions this scan answers</h3>` + qs.map(([q, a]) =>
     `<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
 }
 
 function dossierMD(d) {
   const L = [];
-  L.push("# Expedition dossier — " + d.label, "");
+  L.push("# Expedition report — " + d.label, "");
   L.push("- Date: " + d.date, "- Language: " + (d.language || "Unknown"));
-  L.push("- Verdict: " + d.verdict + " — " + (d.verdictSummary || ""), "");
-  L.push("## Blind transcription (" + d.lineCount + " lines)");
+  L.push("- Result: " + d.verdict + " — " + (d.verdictSummary || ""), "");
+  L.push("## Cold read (" + d.lineCount + " lines)");
   for (const l of d.lines) L.push("- [" + (l.legibility || "partial") + "] " + (l.text || "…"));
   if (d.lineCount > d.lines.length) L.push("- …and " + (d.lineCount - d.lines.length) + " more lines");
   if (d.uncertain && d.uncertain.length) { L.push("", "Uncertain readings:"); for (const u of d.uncertain) L.push("- " + u); }
@@ -224,7 +224,7 @@ function dossierMD(d) {
     L.push("");
   }
   L.push("## Cost", d.costNote, "", "## Honesty note",
-    "Blind-first method: transcribed from pixels alone, then checked against published references. Gaps stay marked. A \"no match\" verdict means no match in what was checked — never \"unpublished\". Verify before citing. Produced with HelmutReads (https://helmutreads.com).", "");
+    "Cold-read method: read from your photo alone, then compared against every known copy. Gaps stay marked. A \"no match\" result means no match in what was checked — never \"unpublished\". Verify before citing. Produced with HelmutReads (https://helmutreads.com).", "");
   return L.join("\n");
 }
 
@@ -286,12 +286,12 @@ function sourcesHTML(sources) {
 }
 
 async function playExpedition({ id, img, language, summary, lines, lineCount, verdict, verdictSummary, queries, sources, costNote, link }) {
-  stage.innerHTML = `<div class="panel scanning" id="p1"><h3>Phase 1 — blind transcription</h3>
-    <img class="plate" src="${esc(img)}" alt="plate" />
+  stage.innerHTML = `<div class="panel scanning" id="p1"><h3>Phase 1 — cold read</h3>
+    <img class="plate" src="${esc(img)}" alt="scanned page" />
     <div class="scanbar"><i id="scan"></i></div>
     <div class="lines" id="lines"></div>
     <p class="meta">${esc(language || "")} · ${esc(summary || "")}</p></div>
-    <div class="panel" id="p2" style="display:none"><h3>Phase 2 — cross-reference</h3>
+    <div class="panel" id="p2" style="display:none"><h3>Phase 2 — compare with known copies</h3>
     <p class="meta" id="p2msg">Checking the world's libraries…</p></div>
     <div id="presult"></div>`;
   const bar = document.getElementById("scan"), box = document.getElementById("lines");
@@ -321,14 +321,14 @@ async function playExpedition({ id, img, language, summary, lines, lineCount, ve
   document.getElementById("presult").innerHTML =
     `<div class="panel seal-panel">${verdictHTML(verdict, verdictSummary)}${sourcesHTML(sources)}
     <p class="meta">${esc(costNote)}</p>${featuredHTML(id)}
-    <div class="btnrow"><button class="ghost" id="copylink">Copy expedition link</button><button class="ghost" id="dossier">Download dossier</button></div></div>`;
+    <div class="btnrow"><button class="ghost" id="copylink">Copy expedition link</button><button class="ghost" id="dossier">Download report</button></div></div>`;
   document.getElementById("copylink").onclick = async () => {
     try { await navigator.clipboard.writeText(link); } catch {}
   };
   document.getElementById("dossier").onclick = () => {
     const s = SAMPLES.find((x) => x.id === id);
     if (!s) return;
-    downloadDossier("helmut-dossier-" + id + ".md", dossierMD({
+    downloadDossier("helmut-report-" + id + ".md", dossierMD({
       label: s.label, date: new Date().toISOString().slice(0, 10) + " (replay)",
       language: s.language, summary: s.summary, lines: s.lines,
       lineCount: s.lineCount, uncertain: s.uncertain || [],
@@ -348,7 +348,7 @@ async function runSample(id) {
     id: s.id, img: s.image, language: s.language, summary: s.summary,
     lines: s.lines, lineCount: s.lineCount, verdict: s.verdict,
     verdictSummary: s.verdictSummary, queries: s.queries, sources: s.sources,
-    costNote: "Replayed expedition — this viewing cost $0. A live run averages ~$0.005.",
+    costNote: "Replayed expedition — this viewing cost $0. A live scan averages ~$0.005.",
     link: location.origin + location.pathname + "#sample-" + id,
   });
 }
@@ -368,31 +368,31 @@ function fileToBase64(file) {
 }
 
 async function runLive(file) {
-  stage.innerHTML = `<div class="panel"><h3>Live expedition</h3><p class="meta">Reading your plate…</p></div>`;
+  stage.innerHTML = `<div class="panel"><h3>Live expedition</h3><p class="meta">Reading your page…</p></div>`;
   try {
     const { dataBase64, mimeType } = await fileToBase64(file);
     const t = await api("transcribePlate", { image: { dataBase64, mimeType }, note: "", provenance: "" });
     const run = t.run;
-    stage.innerHTML = `<div class="panel scanning"><h3>Phase 1 — blind transcription</h3>
+    stage.innerHTML = `<div class="panel scanning"><h3>Phase 1 — cold read</h3>
       <div class="lines">${run.transcription.lines.slice(0, 14).map((l) =>
         `<div><span class="leg-${esc(l.legibility)}">${esc(l.text) || "…"}</span></div>`).join("")}</div>
       <p class="meta">${esc(run.transcription.language)} · ${esc(run.transcription.summary)}</p></div>
-      <div class="panel"><h3>Phase 2 — cross-reference</h3><p class="meta">Checking the world's libraries…</p></div>`;
+      <div class="panel"><h3>Phase 2 — compare with known copies</h3><p class="meta">Checking the world's libraries…</p></div>`;
     const r2 = await api("researchRun", { runId: run.id });
     const rr = r2.run, rs = rr.research;
-    let costNote = "Live run — cost tracked in your usage dashboard.";
+    let costNote = "Live scan — cost tracked in your usage dashboard.";
     try {
       const u = await api("usageSummary", {});
       const row = (u.byRun || []).find((x) => x.id === run.id);
-      if (row) costNote = `Live run — ${row.transcribeIn + row.compareIn} in / ${row.transcribeOut + row.compareOut} out tokens ≈ ${money(dollars(row.transcribeIn + row.compareIn, row.transcribeOut + row.compareOut))}.`;
+      if (row) costNote = `Live scan — ${row.transcribeIn + row.compareIn} words read / ${row.transcribeOut + row.compareOut} words written ≈ ${money(dollars(row.transcribeIn + row.compareIn, row.transcribeOut + row.compareOut))}.`;
     } catch {}
     stage.innerHTML += `<div class="panel seal-panel">${verdictHTML(rs.verdict, rs.verdictSummary)}${sourcesHTML(rs.sources)}
       <p class="meta">${rs.queries && rs.queries.length ? "Searched for: " + rs.queries.map(esc).join(" · ") + "<br>" : ""}${esc(costNote)}</p>
-      <div class="btnrow"><a href="./"><button class="ghost">Open in the workbench</button></a><button class="ghost" id="dossierL">Download dossier</button></div>
-      <div class="askrow"><input id="askq" maxlength="1000" placeholder="Ask about this run — or dig deeper" /><button class="act" id="askbtn">Ask</button></div>
+      <div class="btnrow"><a href="./"><button class="ghost">Open in the workbench</button></a><button class="ghost" id="dossierL">Download report</button></div>
+      <div class="askrow"><input id="askq" maxlength="1000" placeholder="Ask about this scan — or dig deeper" /><button class="act" id="askbtn">Ask</button></div>
       <div class="askout" id="askout"></div></div>`;
-    document.getElementById("dossierL").onclick = () => downloadDossier("helmut-dossier-" + run.id + ".md", dossierMD({
-      label: "Run " + run.id, date: new Date().toISOString().slice(0, 10),
+    document.getElementById("dossierL").onclick = () => downloadDossier("helmut-report-" + run.id + ".md", dossierMD({
+      label: "Scan " + run.id, date: new Date().toISOString().slice(0, 10),
       language: run.transcription.language, summary: run.transcription.summary,
       lines: run.transcription.lines, lineCount: run.transcription.lines.length,
       uncertain: run.transcription.uncertainReadings || [],
@@ -412,7 +412,7 @@ async function runLive(file) {
     document.getElementById("askbtn").onclick = () => void doAsk();
     document.getElementById("askq").addEventListener("keydown", (e) => { if (e.key === "Enter") void doAsk(); });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "The run failed.";
+    const msg = err instanceof Error ? err.message : "The scan failed.";
     const signin = /Sign in required/i.test(msg)
       ? `<br><a href="./">Sign in on the main app first, then come back.</a>` : "";
     stage.innerHTML = `<div class="panel"><p class="err">${esc(msg)}${signin}</p></div>`;
@@ -437,15 +437,15 @@ async function liveMeter() {
     document.getElementById("m-plate").textContent = "~" + money(perPlate);
     document.getElementById("m-per10").textContent = "~" + Math.round(10 / perPlate).toLocaleString();
     document.getElementById("m-basis").textContent =
-      `Live average over ${m.plates} plate${m.plates === 1 ? "" : "s"} · ~${(avgIn / 1000).toFixed(1)}K in / ~${(avgOut / 1000).toFixed(1)}K out tokens per plate`;
+      `Live average over ${m.plates} page${m.plates === 1 ? "" : "s"} · ~${(avgIn / 1000).toFixed(1)}K words read / ~${(avgOut / 1000).toFixed(1)}K written per page`;
     const sliver = document.getElementById("m-sliver");
     sliver.style.width = "max(3px, " + ((perPlate / 10) * 100).toFixed(2) + "%)";
-    sliver.title = "one plate ≈ " + money(perPlate);
+    sliver.title = "one page ≈ " + money(perPlate);
     const e = m.event;
     if (e) {
       const eSpend = dollars(e.inputTokens, e.outputTokens + e.reasoningTokens);
       document.getElementById("m-event").textContent =
-        `Hackathon window: ${e.plates} plate${e.plates === 1 ? "" : "s"} · ${money(eSpend)} of $10`;
+        `Hackathon window: ${e.plates} page${e.plates === 1 ? "" : "s"} · ${money(eSpend)} of $10`;
     }
   } catch { /* static fallback stays */ }
 }
@@ -463,7 +463,7 @@ async function init() {
   strip.innerHTML = "";
   const framings = {
     4: "Investigate an illustrated invocation",
-    11: "Follow a provenance clue",
+    11: "Trace where it came from",
     13: "Decode an illuminated page",
   };
   for (const s of SAMPLES) {
